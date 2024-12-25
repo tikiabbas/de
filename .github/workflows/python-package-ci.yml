@@ -1,0 +1,76 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [created]
+
+env:
+  PYTHON_VERSION: "3.11"  # LTS version closest to 3.11.9
+  # DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+  # DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        poetry config virtualenvs.create false
+    
+    - name: Install dependencies
+      run: |
+        poetry install
+    
+    - name: Run black (code formatting check)
+      run: |
+        poetry run black . --check
+    
+    - name: Run flake8 (linting)
+      run: |
+        poetry run flake8 .
+    
+    - name: Run isort (import sorting)
+      run: |
+        poetry run isort . --check-only --diff
+
+  test:
+    needs: code-quality
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+    
+    - name: Install dependencies
+      run: |
+        poetry install
+    
+    - name: Run pytest with coverage
+      run: |
+        poetry run pytest --cov=de --cov-report=xml --cov-report=term-missing
+    
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+ 
