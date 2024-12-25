@@ -1,5 +1,5 @@
 import pytest
-from src.core.base_processor import BaseProcessor
+from apollo.core.base_processor import BaseProcessor
 from typing import Dict, Any
 
 

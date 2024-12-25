@@ -1,6 +1,6 @@
 import pytest
-from src.core.processor_factory import ProcessorFactory
-from src.bronze.processors.customer_processor import CustomerBronzeProcessor
+from apollo.core.processor_factory import ProcessorFactory
+from apollo.bronze.processors.customer_processor import CustomerBronzeProcessor
 
 
 def test_processor_factory_registration():

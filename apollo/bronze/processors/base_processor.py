@@ -1,5 +1,5 @@
-from src.core.base_processor import BaseProcessor
-# from src.utils.spark_session_manager import SparkSessionManager
+from apollo.core.base_processor import BaseProcessor
+# from apollo.utils.spark_session_manager import SparkSessionManager
 
 
 class BronzeLevelBaseProcessor(BaseProcessor):

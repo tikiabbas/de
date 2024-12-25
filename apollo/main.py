@@ -1,8 +1,8 @@
 import argparse
-from src.core.processor_factory import ProcessorFactory
-from src.bronze.config import register_bronze_processors
-# from src.silver.config import register_silver_processors
-# from src.gold.config import register_gold_processors
+from apollo.core.processor_factory import ProcessorFactory
+from apollo.bronze.config import register_bronze_processors
+# from apollo.silver.config import register_silver_processors
+# from apollo.gold.config import register_gold_processors
 
 def main():
     """
