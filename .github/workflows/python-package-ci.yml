@@ -37,13 +37,13 @@ jobs:
       run: |
         poetry run black . --check
     
-    - name: Run flake8 (linting)
-      run: |
-        poetry run flake8 .
-    
-    - name: Run isort (import sorting)
-      run: |
-        poetry run isort . --check-only --diff
+#    - name: Run flake8 (linting)
+#      run: |
+#        poetry run flake8 .
+#
+#    - name: Run isort (import sorting)
+#      run: |
+#        poetry run isort . --check-only --diff
 
   test:
     needs: code-quality

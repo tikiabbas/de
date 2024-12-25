@@ -6,21 +6,22 @@ from .processors.sales_processor import SalesBronzeProcessor
 from apollo.utils.config_manager import ConfigManager
 
 
-
 def register_bronze_processors():
     # Load bronze-specific configuration
-    bronze_config = ConfigManager.load_config('apollo/config/bronze_config.yaml')
+    bronze_config = ConfigManager.load_config("apollo/config/bronze_config.yaml")
 
-    for table, table_config in bronze_config['tables'].items():
+    for table, table_config in bronze_config["tables"].items():
 
-        module = importlib.import_module(f'apollo.bronze.processors.{table}_processor')
-        processor_class_name = getattr(module, f'{table.capitalize()}BronzeProcessor', None)
+        module = importlib.import_module(f"apollo.bronze.processors.{table}_processor")
+        processor_class_name = getattr(
+            module, f"{table.capitalize()}BronzeProcessor", None
+        )
 
         ProcessorFactory.register_processor(
-            layer='bronze',
+            layer="bronze",
             table=table,
-            processor_class= processor_class_name,  # Example processor
-            config=table_config
+            processor_class=processor_class_name,  # Example processor
+            config=table_config,
         )
 
 
@@ -39,13 +40,13 @@ def register_bronze_processors():
 #         }
 #     )
 
-    # ProcessorFactory.register_processor(
-    #     layer='bronze',
-    #     table='sales',
-    #     processor_class=SalesBronzeProcessor,
-    #     config={
-    #         'source_path': '/data/raw/sales',
-    #         'target_path': '/data/bronze/sales',
-    #         'format': 'parquet'
-    #     }
-    # )
+# ProcessorFactory.register_processor(
+#     layer='bronze',
+#     table='sales',
+#     processor_class=SalesBronzeProcessor,
+#     config={
+#         'source_path': '/data/raw/sales',
+#         'target_path': '/data/bronze/sales',
+#         'format': 'parquet'
+#     }
+# )

@@ -22,4 +22,3 @@ class BaseProcessor(ABC):
         Follows factory pattern design principles
         """
         pass
-

@@ -1,18 +1,20 @@
 import argparse
 from apollo.core.processor_factory import ProcessorFactory
 from apollo.bronze.config import register_bronze_processors
+
 # from apollo.silver.config import register_silver_processors
 # from apollo.gold.config import register_gold_processors
+
 
 def main():
     """
     Entry point for Medallion Architecture pipeline
     Reflects Abbas's experience in developing dynamic ETL solutions
     """
-    parser = argparse.ArgumentParser(description='Medallion Pipeline Processor')
-    parser.add_argument('--layer', required=True, choices=['bronze', 'silver', 'gold'])
-    parser.add_argument('--table', required=True)
-    parser.add_argument('--load_type', choices=['full', 'inc'], default='full')
+    parser = argparse.ArgumentParser(description="Medallion Pipeline Processor")
+    parser.add_argument("--layer", required=True, choices=["bronze", "silver", "gold"])
+    parser.add_argument("--table", required=True)
+    parser.add_argument("--load_type", choices=["full", "inc"], default="full")
 
     args = parser.parse_args()
 
@@ -32,5 +34,5 @@ def main():
         print(f"Error processing {args.table} in {args.layer} layer: {e}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
