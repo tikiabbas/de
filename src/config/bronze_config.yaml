@@ -1,0 +1,20 @@
+# Sample bronze_config.yaml structure
+tables:
+  customer:
+    source_path: "/data/raw/customers"
+    target_path: "/data/bronze/customers"
+    file_format: "csv"
+    primary_key: "customer_id"
+
+  sales:
+    source_path: "/data/raw/sales"
+    target_path: "/data/bronze/sales"
+    file_format: "parquet"
+    primary_key: "sale_id"
+
+processing_config:
+  validation_rules:
+    - drop_null_records
+    - check_schema_integrity
+
+  ingestion_mode: "overwrite"

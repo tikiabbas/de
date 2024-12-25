@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "de"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pip = "==24.3.1"
+pytest = "^8.3.4"
+pyspark = "^3.5.4"
+pyyaml = "^6.0.2"
+pytest-mock = "^3.14.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
