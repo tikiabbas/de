@@ -3,8 +3,9 @@ import structlog
 import logging
 import time
 from functools import wraps
-from datetime import datetime
+# from datetime import datetime
 from pyspark.sql.types import StructType, StructField, StringType, TimestampType
+
 # from typing import Any, Dict
 
 
@@ -14,16 +15,18 @@ class StructuredTableLogger:
         self.spark = None
         self.log_table_path = log_table_path
         self.logger = self._configure_logger()
-        self.log_schema = StructType([
-            StructField("timestamp", TimestampType(), False),
-            StructField("level", StringType(), False),
-            StructField("correlation_id", StringType(), True),
-            StructField("layer", StringType(), True),
-            StructField("processor", StringType(), True),
-            StructField("event", StringType(), False),
-            StructField("execution_time_ms", StringType(), True),
-            StructField("context", StringType(), True)
-        ])
+        self.log_schema = StructType(
+            [
+                StructField("timestamp", TimestampType(), False),
+                StructField("level", StringType(), False),
+                StructField("correlation_id", StringType(), True),
+                StructField("layer", StringType(), True),
+                StructField("processor", StringType(), True),
+                StructField("event", StringType(), False),
+                StructField("execution_time_ms", StringType(), True),
+                StructField("context", StringType(), True),
+            ]
+        )
 
     def _configure_logger(self):
         structlog.configure(
@@ -31,11 +34,11 @@ class StructuredTableLogger:
                 structlog.contextvars.merge_contextvars,
                 structlog.processors.add_log_level,
                 structlog.processors.TimeStamper(fmt="iso"),
-                structlog.processors.JSONRenderer()
+                structlog.processors.JSONRenderer(),
             ],
             wrapper_class=structlog.make_filtering_bound_logger(logging.INFO),
             context_class=dict,
-            cache_logger_on_first_use=True
+            cache_logger_on_first_use=True,
         )
         return structlog.get_logger()
 
@@ -85,7 +88,7 @@ def timing_decorator(func=None, logger=None):
                     "function.execution.completed",
                     execution_time_ms=str(execution_time),
                     status="success",
-                    function=func.__name__
+                    function=func.__name__,
                 )
             return result
 
@@ -99,7 +102,7 @@ def timing_decorator(func=None, logger=None):
                     error=str(e),
                     error_type=type(e).__name__,
                     status="failed",
-                    function=func.__name__
+                    function=func.__name__,
                 )
             raise
 

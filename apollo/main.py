@@ -24,7 +24,9 @@ def main():
 
     try:
         # Dynamically retrieve and execute processor
-        processor = ProcessorFactory.get_processor(args.layer, args.table, args.load_type)
+        processor = ProcessorFactory.get_processor(
+            args.layer, args.table, args.load_type
+        )
         processor.process()
 
         # p = ProcessorFactory()

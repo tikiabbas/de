@@ -3,13 +3,14 @@ from .base_processor import BronzeLevelBaseProcessor
 from apollo.utils.logger import StructuredTableLogger, timing_decorator
 from typing import Dict, Any
 
+
 class CustomerBronzeProcessor(BronzeLevelBaseProcessor):
     def __init__(self, config: Dict[str, Any]):
         print("Init Customer Bronze Proc")
         super().__init__(config)
         self.logger = StructuredTableLogger(
             None,  # self.spark,
-            "logs/medallion_pipeline"  # Changed from dbfs path to local path
+            "logs/medallion_pipeline",  # Changed from dbfs path to local path
         )
         self.correlation_id = str(uuid.uuid4())
 
@@ -23,7 +24,7 @@ class CustomerBronzeProcessor(BronzeLevelBaseProcessor):
                 correlation_id=self.correlation_id,
                 layer="bronze",
                 processor="CustomerBronzeProcessor",
-                load_type=self.load_type
+                load_type=self.load_type,
             )
 
             if self.load_type == "full":
@@ -41,7 +42,7 @@ class CustomerBronzeProcessor(BronzeLevelBaseProcessor):
                 layer="bronze",
                 processor="CustomerBronzeProcessor",
                 error=str(e),
-                error_type=type(e).__name__
+                error_type=type(e).__name__,
             )
             raise
 
@@ -52,11 +53,10 @@ class CustomerBronzeProcessor(BronzeLevelBaseProcessor):
                 "full_load.start",
                 correlation_id=self.correlation_id,
                 layer="bronze",
-                processor="CustomerBronzeProcessor"
+                processor="CustomerBronzeProcessor",
             )
 
             print("Full load is triggered.")
-
 
             self.logger.log(
                 "INFO",
@@ -64,7 +64,7 @@ class CustomerBronzeProcessor(BronzeLevelBaseProcessor):
                 correlation_id=self.correlation_id,
                 layer="bronze",
                 processor="CustomerBronzeProcessor",
-                record_count="0"  # Removed df.count() as no DataFrame exists
+                record_count="0",  # Removed df.count() as no DataFrame exists
             )
 
         except Exception as e:
@@ -75,7 +75,7 @@ class CustomerBronzeProcessor(BronzeLevelBaseProcessor):
                 layer="bronze",
                 processor="CustomerBronzeProcessor",
                 error=str(e),
-                error_type=type(e).__name__
+                error_type=type(e).__name__,
             )
             raise
 
@@ -86,7 +86,7 @@ class CustomerBronzeProcessor(BronzeLevelBaseProcessor):
                 "incremental_load.start",
                 correlation_id=self.correlation_id,
                 layer="bronze",
-                processor="CustomerBronzeProcessor"
+                processor="CustomerBronzeProcessor",
             )
 
             print("Inc load is triggered.")
@@ -97,7 +97,7 @@ class CustomerBronzeProcessor(BronzeLevelBaseProcessor):
                 correlation_id=self.correlation_id,
                 layer="bronze",
                 processor="CustomerBronzeProcessor",
-                record_count="0"  # Removed df.count() as no DataFrame exists
+                record_count="0",  # Removed df.count() as no DataFrame exists
             )
 
         except Exception as e:
@@ -108,6 +108,6 @@ class CustomerBronzeProcessor(BronzeLevelBaseProcessor):
                 layer="bronze",
                 processor="CustomerBronzeProcessor",
                 error=str(e),
-                error_type=type(e).__name__
+                error_type=type(e).__name__,
             )
             raise
