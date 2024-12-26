@@ -15,6 +15,7 @@ pytest = "^8.3.4"
 pyspark = "^3.5.4"
 pyyaml = "^6.0.2"
 pytest-mock = "^3.14.0"
+structlog = "^24.4.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.1.1"

@@ -24,11 +24,11 @@ def main():
 
     try:
         # Dynamically retrieve and execute processor
-        # processor = ProcessorFactory.get_processor(args.layer, args.table, args.load_type)
-        # processor.process()
+        processor = ProcessorFactory.get_processor(args.layer, args.table, args.load_type)
+        processor.process()
 
-        p = ProcessorFactory()
-        p.get_processor(args.layer, args.table, args.load_type).process()
+        # p = ProcessorFactory()
+        # p.get_processor(args.layer, args.table, args.load_type).process()
         # print(f'Processor: {processor}')
     except Exception as e:
         print(f"Error processing {args.table} in {args.layer} layer: {e}")

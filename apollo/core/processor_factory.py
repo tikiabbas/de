@@ -42,13 +42,13 @@ class ProcessorFactory:
                 f"Invalid layer: {layer}. Available layers: {list(cls._processors.keys())}"
             )
         processor_info = cls._processors[layer].get(table)
-        # print(f'Printing Class parameter passed to ProcessorFactory: \n{cls._processors}')
+        print(f'Printing Class parameter passed to ProcessorFactory: \n{cls._processors}')
         # print(f'processor_info: {processor_info}')
         if not processor_info:
             raise ValueError(f"No processor found for layer: {layer}, table: {table}")
 
         processor_config = processor_info["config"].copy()
         processor_config["load_type"] = load_type
-        # print(f'processor_config returned from processorfactory:\n {processor_config}')
+        print(f'processor_config returned from processorfactory:\n {processor_config}')
         return processor_info["class"](processor_config)
         # return processor_info['class'](processor_info['config'])

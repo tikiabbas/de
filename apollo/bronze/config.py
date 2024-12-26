@@ -9,6 +9,7 @@ from apollo.utils.config_manager import ConfigManager
 def register_bronze_processors():
     # Load bronze-specific configuration
     bronze_config = ConfigManager.load_config("apollo/config/bronze_config.yaml")
+    print("In register_bronze_processor")
 
     for table, table_config in bronze_config["tables"].items():
 
