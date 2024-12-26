@@ -1,0 +1,68 @@
+name: Production Deployment
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.11"
+  ENVIRONMENT: production
+
+jobs:
+  validate-release:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check release tag format
+        run: |
+          if [[ ! ${{ github.event.release.tag_name }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid release tag format. Must be vX.Y.Z"
+            exit 1
+          fi
+
+  deploy-production:
+    name: Deploy to Production
+    needs: validate-release
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.deployment-url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Build production package
+        run: poetry build
+
+      - name: Deploy to Production Databricks
+        env:
+          DATABRICKS_HOST: ${{ secrets.PROD_DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.PROD_DATABRICKS_TOKEN }}
+        run: |
+          pip install databricks-cli
+          WHEEL_FILE=$(ls dist/*.whl | head -n 1)
+          databricks fs cp "$WHEEL_FILE" "dbfs:/FileStore/packages/production/" --overwrite
+
+      - name: Create deployment tag
+        run: |
+          git tag "deploy-${{ github.event.release.tag_name }}"
+          git push origin "deploy-${{ github.event.release.tag_name }}"
+
+  post-deploy-checks:
+    name: Post-deployment Checks
+    needs: deploy-production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Health check
+        run: |
+          # Add your post-deployment validation here
+          echo "Running post-deployment checks"

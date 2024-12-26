@@ -1,0 +1,69 @@
+name: Staging Deployment
+
+on:
+  push:
+    branches: [ develop ]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.11"
+  ENVIRONMENT: staging
+
+jobs:
+  build:
+    name: Build Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Build package
+        run: poetry build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+          retention-days: 5
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: ${{ steps.deploy.outputs.deployment-url }}
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist/
+
+      - name: Deploy to Staging Databricks
+        env:
+          DATABRICKS_HOST: ${{ secrets.STAGING_DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.STAGING_DATABRICKS_TOKEN }}
+        run: |
+          pip install databricks-cli
+          WHEEL_FILE=$(ls dist/*.whl | head -n 1)
+          databricks fs cp "$WHEEL_FILE" "dbfs:/FileStore/packages/staging/" --overwrite
+
+#  integration-tests:
+#    name: Run Integration Tests
+#    needs: deploy-staging
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Run integration tests
+#        run: |
+#          # Add your integration tests here
+#          echo "Running integration tests in staging"

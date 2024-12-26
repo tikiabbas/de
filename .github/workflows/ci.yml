@@ -1,0 +1,83 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'hotfix/**'
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install dependencies
+        run: poetry install --with dev
+
+      - name: Run black
+        run: poetry run black . --check
+
+#      - name: Run flake8
+#        run: poetry run flake8 .
+#
+#      - name: Run isort
+#        run: poetry run isort . --check-only --diff
+
+#  security-scan:
+#    name: Security Scanning
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Run Bandit
+#        uses: python-security/bandit-action@v1
+#
+#      - name: Run dependency scan
+#        uses: snyk/actions/python@master
+#        env:
+#          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+  test:
+    name: Run Tests
+    needs: code-quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run pytest with coverage
+        run: poetry run pytest --cov=de --cov-report=xml --cov-report=term-missing
+
+      - name: Coverage threshold check
+        run: |
+          COVERAGE=$(poetry run coverage report | grep TOTAL | awk '{print $4}' | sed 's/%//')
+          if (( $(echo "$COVERAGE < 50" | bc -l) )); then
+            echo "Coverage is below 80%"
+            exit 1
+          fi
