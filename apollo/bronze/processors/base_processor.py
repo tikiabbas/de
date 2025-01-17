@@ -1,6 +1,6 @@
 from apollo.core.base_processor import BaseProcessor
 
-# from apollo.utils.spark_session_manager import SparkSessionManager
+from apollo.utils.spark_session_manager import SparkSessionManager
 
 
 class BronzeLevelBaseProcessor(BaseProcessor):
@@ -8,7 +8,7 @@ class BronzeLevelBaseProcessor(BaseProcessor):
         # super().__init__(config)
         self.config = config
         self.load_type = config.get("load_type", "full")
-        # self.spark = SparkSessionManager.get_spark_session()
+        self.spark = SparkSessionManager.get_spark_session()
         print("Test spark session.")
 
     def validate_schema(self, df):
