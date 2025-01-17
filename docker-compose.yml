@@ -1,0 +1,9 @@
+#version: '3.8'
+services:
+  medallion-pipeline:
+    build: .
+    volumes:
+      - ./:/app
+    tty: true
+    stdin_open: true
+    command: /bin/bash
